@@ -26,7 +26,7 @@ mode never reads Cursor.app credentials; macOS uses its cookie ladder, while Lin
      nonempty values remain distinct from a missing session so they cannot enable stale cached-account fallback.
    - Files consulted by SQLite:
      - macOS main DB: `~/Library/Application Support/Cursor/User/globalStorage/state.vscdb`
-     - Linux main DB: `$XDG_CONFIG_HOME/Cursor/User/globalStorage/state.vscdb` (default: `~/.config/Cursor/User/globalStorage/state.vscdb`)
+     - Linux main DB: absolute `$XDG_CONFIG_HOME/.../state.vscdb`, else absolute `$HOME/.config/...`, else account-home `.config/...`
      - Active WAL sidecars when present: `state.vscdb-wal` and `state.vscdb-shm`
    - The database is opened read-only. Active WAL state is read normally; an idle WAL-mode main file with no
      sidecars uses SQLite immutable mode so CodexBar does not recreate files in Cursor's directory.
@@ -94,7 +94,7 @@ Manual option:
 - Automatic usage (`codexbar usage --provider cursor`) supports the signed-in Cursor app on Linux after manual, cached, and
   stored sessions have been considered.
 - Authentication order: manual cookie header → cached session → stored session → Cursor app access token.
-- The app token is read from `$XDG_CONFIG_HOME/Cursor/User/globalStorage/state.vscdb`, falling back to `~/.config/Cursor/User/globalStorage/state.vscdb` when `XDG_CONFIG_HOME` is unset or relative. The database is read-only; expired app tokens are not refreshed by CodexBar.
+- The app token is read from absolute `$XDG_CONFIG_HOME/Cursor/User/globalStorage/state.vscdb`, then `$HOME/.config/...` when `HOME` is absolute, then the account home’s `.config/...`. Relative `XDG_CONFIG_HOME` / `HOME` values are ignored. The database is read-only; expired app tokens are not refreshed by CodexBar.
 - Cursor usage includes the Grok Bot weekly allowance and reset time when the account exposes it. Grok Bot endpoint failures do not hide Cursor usage.
 - Explicit `--source web` requires a manual cookie and never reads the app token.
 - Automatic browser cookie import and the external-browser Add/Switch flow remain macOS app features.

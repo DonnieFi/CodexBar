@@ -13,7 +13,7 @@ Thanks @DonnieFi for the original contribution.
 
 - Rebases the Linux app-auth change onto the current upstream `main`.
 - Keeps manual cookies and cached/stored sessions ahead of the app token, and makes explicit Linux `web` mode manual-cookie only.
-- Validates absolute-only `XDG_CONFIG_HOME` handling, including a literal `~/custom` regression case.
+- Validates absolute-only `XDG_CONFIG_HOME` and absolute `HOME` handling, including redirected-HOME and literal `~/custom` regression cases.
 - Covers cached-session precedence, explicit-web isolation, app-token expiry, read-only database access, and best-effort Grok Bot behavior.
 - Clarifies Linux paths, fallback order, CLI behavior, and contributor credit in the docs and changelog.
 
@@ -26,7 +26,7 @@ Thanks @DonnieFi for the original contribution.
 
 ## Proof
 
-- Focused Linux suites: 15 tests in 2 suites passed.
+- Focused Linux suites: 19 tests in 2 suites passed.
 - Full suite: `make test` passed 94 tests in 9 suites (69 selections, 6 groups).
 - Release CLI build passed and is installed at `/home/red/.local/bin/codexbar`.
 - Live CLI smoke passed for Cursor and Grok Bot usage; output was redacted before capture.

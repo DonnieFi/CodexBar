@@ -17,6 +17,38 @@ struct CursorAppAuthLinuxTests {
     }
 
     @Test
+    func `app database path honors absolute HOME before system home`() {
+        let path = CursorAppAuthStore.resolveDefaultDBPath(
+            environment: ["HOME": "/tmp/redirected-home"])
+        #expect(path == "/tmp/redirected-home/.config/Cursor/User/globalStorage/state.vscdb")
+    }
+
+    @Test(arguments: ["", "relative/home", "~/custom"])
+    func `app database path ignores non-absolute HOME`(envHome: String) {
+        let path = CursorAppAuthStore.resolveDefaultDBPath(
+            environment: ["HOME": envHome])
+        #expect(path == "\(NSHomeDirectory())/.config/Cursor/User/globalStorage/state.vscdb")
+    }
+
+    @Test
+    func `app database path keeps injected home ahead of environment HOME`() {
+        let path = CursorAppAuthStore.resolveDefaultDBPath(
+            home: "/home/injected",
+            environment: ["HOME": "/tmp/redirected-home"])
+        #expect(path == "/home/injected/.config/Cursor/User/globalStorage/state.vscdb")
+    }
+
+    @Test
+    func `app database path keeps absolute XDG ahead of HOME`() {
+        let path = CursorAppAuthStore.resolveDefaultDBPath(
+            environment: [
+                "HOME": "/tmp/redirected-home",
+                "XDG_CONFIG_HOME": "/custom/config",
+            ])
+        #expect(path == "/custom/config/Cursor/User/globalStorage/state.vscdb")
+    }
+
+    @Test
     func `cached session takes precedence over a valid app token`() async throws {
         KeychainCacheStore.setTestStoreForTesting(true)
         defer { KeychainCacheStore.setTestStoreForTesting(false) }
