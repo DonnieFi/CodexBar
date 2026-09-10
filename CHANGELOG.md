@@ -9,6 +9,7 @@
 - Website: keep Arabic and Persian hero copy clear of the illustration, preserve natural text direction, and avoid an oversized tablet popover during its reveal (#3514, fixes #3511). Thanks @devYRPauli!
 - Codex accounts: replace a misleading automatic CLI-retry promise with account-specific reauthentication guidance when native credentials need renewal (related to #3523). Thanks @zhulijin1991!
 - Menus: refresh cached status menus when macOS appearance changes, including previously opened submenus, so the first opening matches Light/Dark and accessibility appearances (#3526). Thanks @emanuelst!
+- Linux: restore Cursor usage through the signed-in app token, including the Grok Bot weekly allowance. Preserve manual-cookie precedence and keep explicit web mode independent of app credentials. Thanks @DonnieFi for upstream PR #1908!
 
 - Documentation: point Spark and Daily Routines visibility instructions to the current per-item controls and include Overview in their scope.
 
@@ -35,7 +36,6 @@
 
 ### Development
 - Test runner: fail early when Python lacks required process-containment APIs and explain how to select a compatible interpreter (#3517, fixes #3515). Thanks @devYRPauli!
-
 ## 0.57.0 — 2026-09-08
 
 ### Highlights

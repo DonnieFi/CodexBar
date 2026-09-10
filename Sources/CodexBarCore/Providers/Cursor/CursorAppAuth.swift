@@ -1,9 +1,12 @@
 import Foundation
 
-#if os(macOS)
 #if canImport(SQLite3)
 import SQLite3
+#elseif canImport(CSQLite3)
+import CSQLite3
 #endif
+#if canImport(FoundationNetworking)
+import FoundationNetworking
 #endif
 
 #if os(macOS) || os(Linux)
@@ -102,7 +105,7 @@ struct CursorSessionIdentity: Equatable, Sendable {
 }
 #endif
 
-#if os(macOS)
+#if os(macOS) || os(Linux)
 struct CursorAppAuthSession: Equatable, Sendable {
     static let persistedCookieMarker = "CodexBar Cursor.app local auth"
 
@@ -218,12 +221,11 @@ struct CursorAppAuthStore: CursorAppAuthSessionProviding {
         #elseif os(Linux)
         let configHome = environment[CodexBarConfigStore.xdgConfigHomeEnvironmentKey]?
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        let expandedConfigHome = configHome.map { ($0 as NSString).expandingTildeInPath }
-        let base: String = if let expandedConfigHome,
-                              !expandedConfigHome.isEmpty,
-                              (expandedConfigHome as NSString).isAbsolutePath
+        let base: String = if let configHome,
+                              !configHome.isEmpty,
+                              configHome.hasPrefix("/")
         {
-            expandedConfigHome
+            configHome
         } else {
             "\(home)/.config"
         }
