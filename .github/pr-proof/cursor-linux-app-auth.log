@@ -14,7 +14,7 @@ Summary
 
 PR requirements checked
 - Summary, maintainer improvements, behavior, proof, exact reviewed head, and contributor thanks are represented here or in the linked source/docs changes.
-- The PR's auth-provider merge-risk label is retained as a review consideration for maintainer review.
+- The auth-provider merge-risk label used on upstream PR #1908 is called out as a review consideration; GitHub requires repository-admin rights to apply custom labels, so this fork PR remains unlabeled.
 
 Team review outcome
 - Standards review: absolute-only `XDG_CONFIG_HOME` handling is covered, including a literal `~/custom` regression case.
