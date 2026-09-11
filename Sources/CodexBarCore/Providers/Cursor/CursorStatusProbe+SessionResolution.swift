@@ -177,28 +177,8 @@ extension CursorStatusProbe {
             return value
         }
         #if os(Linux)
-        // Preserve Linux credential precedence: manual override, cached sessions, then app auth.
-        // Explicit web mode must never read the app token, and transient session failures above
-        // must not silently switch to the account signed into the app.
         if allowAppAuthFallback {
-            let appSession: CursorAppAuthSession?
-            do {
-                appSession = try self.appAuthStore.loadSession()
-            } catch {
-                appSession = nil
-                log("Cursor.app local auth read failed: \(error.localizedDescription)")
-            }
-            if let appSession, appSession.isUsable {
-                log("Using Cursor.app local auth fallback")
-                do {
-                    return try await perform(appSession.cookieHeader(), appSession.identity)
-                } catch let error as CursorStatusProbeError {
-                    guard case .notLoggedIn = error else { throw error }
-                    log("Cursor.app local auth was rejected")
-                } catch {
-                    throw CursorStatusProbeError.networkError(error.localizedDescription)
-                }
-            }
+            return try await self.fetchLinuxAppSession(log: log, perform: perform)
         }
         #endif
         throw CursorStatusProbeError.noSessionCookie

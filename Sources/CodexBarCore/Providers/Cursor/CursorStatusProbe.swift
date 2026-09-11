@@ -831,7 +831,7 @@ public struct CursorStatusProbe: Sendable {
     public var timeout: TimeInterval = 15.0
     let browserDetection: BrowserDetection
     let browserCookieImportOrder: BrowserCookieImportOrder
-    private let urlSession: any ProviderHTTPTransport
+    let urlSession: any ProviderHTTPTransport
     #if os(macOS) || os(Linux)
     let appAuthStore: any CursorAppAuthSessionProviding
     #endif
@@ -938,26 +938,7 @@ public struct CursorStatusProbe: Sendable {
         self.conditionalMutationCoordinator = conditionalMutationCoordinator
     }
 
-    #elseif os(Linux)
-    init(
-        baseURL: URL = URL(string: "https://cursor.com")!,
-        timeout: TimeInterval = 15.0,
-        browserDetection: BrowserDetection,
-        browserCookieImportOrder: BrowserCookieImportOrder = Self.defaultBrowserCookieImportOrder,
-        urlSession: any ProviderHTTPTransport = ProviderHTTPClient.shared,
-        appAuthStore: any CursorAppAuthSessionProviding,
-        conditionalMutationCoordinator: CookieHeaderCache.ConditionalMutationCoordinator = .shared)
-    {
-        self.baseURL = baseURL
-        self.timeout = timeout
-        self.browserDetection = browserDetection
-        self.browserCookieImportOrder = browserCookieImportOrder
-        self.urlSession = urlSession
-        self.appAuthStore = appAuthStore
-        self.conditionalMutationCoordinator = conditionalMutationCoordinator
-    }
-
-    #else
+    #elseif !os(Linux)
     init(
         baseURL: URL = URL(string: "https://cursor.com")!,
         timeout: TimeInterval = 15.0,
@@ -972,15 +953,6 @@ public struct CursorStatusProbe: Sendable {
         self.browserCookieImportOrder = browserCookieImportOrder
         self.urlSession = urlSession
         self.conditionalMutationCoordinator = conditionalMutationCoordinator
-    }
-    #endif
-
-    #if os(macOS) || os(Linux)
-    /// Fetch Cursor usage using a first-party web session derived from Cursor.app's access token.
-    func fetchWithAppAuthSession(_ session: CursorAppAuthSession) async throws -> CursorStatusSnapshot {
-        try await self.fetchWithCookieHeader(
-            session.cookieHeader(),
-            identityFallback: session.identity)
     }
     #endif
 
@@ -1382,7 +1354,7 @@ public struct CursorStatusProbe: Sendable {
     }
     #endif
 
-    private func fetchWithCookieHeader(
+    func fetchWithCookieHeader(
         _ cookieHeader: String,
         identityFallback: CursorSessionIdentity? = nil,
         deadline: Date? = nil) async throws -> CursorStatusSnapshot
